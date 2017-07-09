@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	cep "github.com/itsubaki/gocep"
@@ -17,7 +18,10 @@ type GoStream struct {
 }
 
 func NewGoStream(config Config) *GoStream {
-	stream := NewBuilder().Build()
+	stream := cep.NewStream(1024)
+	window := cep.NewTimeWindow(3*time.Second, 1024)
+	window.Function(cep.Count{As: "cnt"})
+	stream.Window(window)
 
 	gost := &GoStream{
 		config,
