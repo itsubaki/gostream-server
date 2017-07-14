@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -12,24 +13,29 @@ import (
 )
 
 type GoStream struct {
-	config Config
-	stream *cep.Stream
+	config  Config
+	handler [](*RequestHandler)
 	Canceller
 }
 
 func NewGoStream(config Config) *GoStream {
-	stream := cep.NewStream(1024)
-	window := cep.NewTimeWindow(3*time.Second, 1024)
-	window.Function(cep.Count{As: "cnt"})
-	stream.Window(window)
+	canceller := NewCanceller()
+	handler := [](*RequestHandler){}
+
+	for i := 0; i < 3; i++ {
+		stream := cep.NewStream(1024)
+		window := cep.NewTimeWindow(3*time.Second, 1024)
+		window.Function(cep.Count{As: "cnt"})
+		stream.Window(window)
+		handler = append(handler, &RequestHandler{"/foobar/" + strconv.Itoa(i), stream, canceller.Ctx})
+	}
 
 	gost := &GoStream{
 		config,
-		stream,
-		NewCanceller(),
+		handler,
+		canceller,
 	}
 
-	go gost.listen()
 	return gost
 }
 
@@ -41,17 +47,12 @@ func (s *GoStream) Update(e []cep.Event) {
 	log.Println(e)
 }
 
-func (s *GoStream) Rcv(c *gin.Context) {
-	m := make(map[string]interface{})
-	for k, v := range c.Request.Header {
-		m[k] = v[0]
-	}
-	s.stream.Input() <- cep.MapEvent{Record: m}
-}
-
 func (s *GoStream) Run() {
 	router := gin.Default()
-	router.POST("/", s.Rcv)
+	for _, h := range s.handler {
+		router.POST(h.uri, h.Handle)
+		go h.Listen()
+	}
 	router.Run(s.config.Port)
 }
 
@@ -63,15 +64,4 @@ func (s *GoStream) ShutdownHook() {
 		s.Close()
 		os.Exit(0)
 	}()
-}
-
-func (s *GoStream) listen() {
-	for {
-		select {
-		case <-s.Ctx.Done():
-			return
-		case e := <-s.stream.Output():
-			s.Update(e)
-		}
-	}
 }
