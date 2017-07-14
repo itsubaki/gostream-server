@@ -1,7 +1,7 @@
 package lib
 
 import (
-	"log"
+	"context"
 	"os"
 	"os/signal"
 	"strconv"
@@ -14,43 +14,41 @@ import (
 
 type GoStream struct {
 	config  Config
-	handler [](*RequestHandler)
-	Canceller
+	handler []Handler
+	ctx     context.Context
+	cancel  func()
 }
 
 func NewGoStream(config Config) *GoStream {
-	canceller := NewCanceller()
-	handler := [](*RequestHandler){}
+	ctx, cancel := context.WithCancel(context.Background())
+	handler := []Handler{}
 
 	for i := 0; i < 3; i++ {
 		stream := cep.NewStream(1024)
 		window := cep.NewTimeWindow(3*time.Second, 1024)
 		window.Function(cep.Count{As: "cnt"})
 		stream.Window(window)
-		handler = append(handler, &RequestHandler{"/foobar/" + strconv.Itoa(i), stream, canceller.Ctx})
+		handler = append(handler, &RequestHandler{"/foobar/" + strconv.Itoa(i), stream, ctx})
 	}
 
 	gost := &GoStream{
 		config,
 		handler,
-		canceller,
+		ctx,
+		cancel,
 	}
 
 	return gost
 }
 
 func (s *GoStream) Close() {
-	s.Cancel()
-}
-
-func (s *GoStream) Update(e []cep.Event) {
-	log.Println(e)
+	s.cancel()
 }
 
 func (s *GoStream) Run() {
 	router := gin.Default()
 	for _, h := range s.handler {
-		router.POST(h.uri, h.Handle)
+		router.POST(h.URI(), h.Handle)
 		go h.Listen()
 	}
 	router.Run(s.config.Port)

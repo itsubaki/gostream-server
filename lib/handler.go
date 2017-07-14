@@ -8,10 +8,25 @@ import (
 	cep "github.com/itsubaki/gocep"
 )
 
+type Handler interface {
+	URI() string
+	Handle(c *gin.Context)
+	Listen()
+	Update(e []cep.Event)
+}
+
 type RequestHandler struct {
 	uri    string
 	stream *cep.Stream
 	ctx    context.Context
+}
+
+func (h *RequestHandler) Update(e []cep.Event) {
+	log.Println(e)
+}
+
+func (h *RequestHandler) URI() string {
+	return h.uri
 }
 
 func (h *RequestHandler) Handle(c *gin.Context) {
@@ -31,8 +46,4 @@ func (h *RequestHandler) Listen() {
 			h.Update(e)
 		}
 	}
-}
-
-func (h *RequestHandler) Update(e []cep.Event) {
-	log.Println(e)
 }
