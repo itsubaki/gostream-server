@@ -1,3 +1,4 @@
+Port: 1234
 Handler:
   /foobar:
     query: "select * from MapEvent"
