@@ -1,8 +1,0 @@
-Port: 1234
-Handler:
-  /foobar:
-    query: "select * from MapEvent"
-    capacity: 1024
-  /hoge:
-    query: "select * from MapEvent"
-    capacity: 1024

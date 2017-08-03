@@ -26,8 +26,8 @@ func NewGoStream(config Config) *GoStream {
 	for i := 0; i < 3; i++ {
 		stream := cep.NewStream(1024)
 		window := cep.NewTimeWindow(3*time.Second, 1024)
-		window.Function(cep.Count{As: "cnt"})
-		stream.Window(window)
+		window.SetFunction(cep.Count{As: "cnt"})
+		stream.SetWindow(window)
 		handler = append(handler, &RequestHandler{"/foobar/" + strconv.Itoa(i), stream, ctx})
 	}
 
@@ -48,7 +48,8 @@ func (s *GoStream) Close() {
 func (s *GoStream) Run() {
 	router := gin.Default()
 	for _, h := range s.handler {
-		router.POST(h.URI(), h.Handle)
+		router.POST(h.URI(), h.POST)
+		router.GET(h.URI(), h.GET)
 		go h.Listen()
 	}
 	router.Run(s.config.Port)
