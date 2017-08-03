@@ -4,7 +4,6 @@ import (
 	"context"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 	"time"
 
@@ -23,13 +22,11 @@ func NewGoStream(config Config) *GoStream {
 	ctx, cancel := context.WithCancel(context.Background())
 	handler := []Handler{}
 
-	for i := 0; i < 3; i++ {
-		stream := cep.NewStream(1024)
-		window := cep.NewTimeWindow(3*time.Second, 1024)
-		window.SetFunction(cep.Count{As: "cnt"})
-		stream.SetWindow(window)
-		handler = append(handler, &RequestHandler{"/foobar/" + strconv.Itoa(i), stream, ctx})
-	}
+	stream := cep.NewStream(1024)
+	window := cep.NewTimeWindow(3*time.Second, 1024)
+	window.SetFunction(cep.Count{As: "cnt"})
+	stream.SetWindow(window)
+	handler = append(handler, &RequestHandler{"", stream, ctx, []cep.Event{}})
 
 	gost := &GoStream{
 		config,

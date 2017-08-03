@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,6 +20,7 @@ type RequestHandler struct {
 	uri    string
 	stream *cep.Stream
 	ctx    context.Context
+	latest []cep.Event
 }
 
 func (h *RequestHandler) URI() string {
@@ -28,7 +28,7 @@ func (h *RequestHandler) URI() string {
 }
 
 func (h *RequestHandler) GET(c *gin.Context) {
-	c.JSON(http.StatusOK, h.stream.Window())
+	c.JSON(http.StatusOK, h.latest)
 }
 
 func (h *RequestHandler) POST(c *gin.Context) {
@@ -51,7 +51,5 @@ func (h *RequestHandler) Listen() {
 }
 
 func (h *RequestHandler) Update(event []cep.Event) {
-	for _, e := range event {
-		log.Println(e)
-	}
+	h.latest = event
 }
