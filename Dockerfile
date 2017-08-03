@@ -1,7 +1,9 @@
 FROM golang:1.8
 
-RUN go get github.com/itsubaki/gostream
+WORKDIR /go/src/app
+COPY . .
 
-ENTRYPOINT gostream
+RUN go-wrapper download
+RUN go-wrapper install
 
-EXPOSE 1234
+CMD ["go-wrapper", "run"]
