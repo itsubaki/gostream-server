@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	cep "github.com/itsubaki/gocep"
@@ -10,33 +9,24 @@ import (
 
 type Handler interface {
 	URI() string
-	POST(c *gin.Context)
-	GET(c *gin.Context)
+	Output() Output
 	Listen()
-	Update(e []cep.Event)
+	POST(c *gin.Context)
 }
 
 type RequestHandler struct {
+	ctx    context.Context
 	uri    string
 	stream *cep.Stream
-	ctx    context.Context
-	latest []cep.Event
+	output Output
 }
 
 func (h *RequestHandler) URI() string {
 	return h.uri
 }
 
-func (h *RequestHandler) GET(c *gin.Context) {
-	c.JSON(http.StatusOK, h.latest)
-}
-
-func (h *RequestHandler) POST(c *gin.Context) {
-	m := make(map[string]interface{})
-	for k, v := range c.Request.Header {
-		m[k] = v[0]
-	}
-	h.stream.Input() <- cep.MapEvent{Record: m}
+func (h *RequestHandler) Output() Output {
+	return h.output
 }
 
 func (h *RequestHandler) Listen() {
@@ -45,11 +35,15 @@ func (h *RequestHandler) Listen() {
 		case <-h.ctx.Done():
 			break
 		case e := <-h.stream.Output():
-			h.Update(e)
+			h.Output().Update(e)
 		}
 	}
 }
 
-func (h *RequestHandler) Update(event []cep.Event) {
-	h.latest = event
+func (h *RequestHandler) POST(c *gin.Context) {
+	m := make(map[string]interface{})
+	for k, v := range c.Request.Header {
+		m[k] = v[0]
+	}
+	h.stream.Input() <- cep.MapEvent{Record: m}
 }
