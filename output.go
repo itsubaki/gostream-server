@@ -15,18 +15,18 @@ type Output interface {
 	Close()
 }
 
-func NewOutput(config Config) Output {
+func NewOutput(config *Config) Output {
 	ctx := context.Background()
 
 	if config.Output == "pubsub" {
 		pubsub, err := pubsub.NewClient(ctx, config.ProjectID)
 		if err != nil {
 			log.Println(err)
-			return &OutputStdOut{}
+			return &OutputStdOut{config.Pretty}
 		}
 
 		topic := pubsub.Topic(config.Topic)
-		return &OutputPubSub{ctx, pubsub, topic}
+		return &OutputPubSub{ctx, pubsub, topic, config.Pretty}
 	}
 
 	if config.Output == "logging" {
@@ -36,19 +36,20 @@ func NewOutput(config Config) Output {
 			return &OutputStdOut{}
 		}
 		logger := logging.Logger(config.Logger)
-		return &OutputLogging{logging, logger}
+		return &OutputLogging{logging, logger, config.Pretty}
 	}
 
-	return &OutputStdOut{}
+	return &OutputStdOut{config.Pretty}
 }
 
 type OutputLogging struct {
 	client *logging.Client
 	logger *logging.Logger
+	pretty bool
 }
 
 func (o *OutputLogging) Update(event []cep.Event) {
-	json, err := Json(event)
+	json, err := Json(event, o.pretty)
 	if err != nil {
 		log.Println(err)
 		return
@@ -73,10 +74,11 @@ type OutputPubSub struct {
 	ctx    context.Context
 	client *pubsub.Client
 	topic  *pubsub.Topic
+	pretty bool
 }
 
 func (o *OutputPubSub) Update(event []cep.Event) {
-	json, err := Json(event)
+	json, err := Json(event, o.pretty)
 	if err != nil {
 		log.Println(err)
 		return
@@ -101,10 +103,11 @@ func (o *OutputPubSub) Close() {
 }
 
 type OutputStdOut struct {
+	pretty bool
 }
 
 func (o *OutputStdOut) Update(event []cep.Event) {
-	json, err := Json(event)
+	json, err := Json(event, o.pretty)
 	if err != nil {
 		log.Println(err)
 		return
