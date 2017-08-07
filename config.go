@@ -19,16 +19,10 @@ type Config struct {
 func NewConfig() *Config {
 	port := Get("GOSTREAM_PORT", "1234")
 	output := Get("GOSTREAM_OUTPUT", "stdout")
-	pretty := Get("GOSTREAM_OUTPUT_PRETTY", "false")
 	projectID := Get("GOSTREAM_PROJECT_ID", "")
 	topic := Get("GOSTREAM_PUBSUB_TOPIC", "")
 	logger := Get("GOSTREAM_LOGGING_LOGGER", "gostream")
-
-	tof, err := strconv.ParseBool(pretty)
-	if err != nil {
-		tof = false
-		log.Println(err)
-	}
+	pretty := GetBool("GOSTREAM_OUTPUT_PRETTY", false)
 
 	return &Config{
 		Port:      ":" + port,
@@ -36,7 +30,7 @@ func NewConfig() *Config {
 		ProjectID: projectID,
 		Topic:     topic,
 		Logger:    logger,
-		Pretty:    tof,
+		Pretty:    pretty,
 	}
 }
 
@@ -54,4 +48,17 @@ func Get(env, init string) string {
 		return init
 	}
 	return val
+}
+
+func GetBool(env string, init bool) bool {
+	val := os.Getenv(env)
+	if len(val) == 0 {
+		return init
+	}
+	ret, err := strconv.ParseBool(val)
+	if err != nil {
+		log.Println(err)
+		return init
+	}
+	return ret
 }
