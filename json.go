@@ -7,16 +7,21 @@ import (
 	cep "github.com/itsubaki/gocep"
 )
 
-func Json(event []cep.Event) (string, error) {
+func Json(event []cep.Event, pretty bool) (string, error) {
 	b, err := json.Marshal(event)
 	if err != nil {
 		return "", err
 	}
-	var pretty bytes.Buffer
-	err = json.Indent(&pretty, b, "", " ")
+
+	if !pretty {
+		return string(b), nil
+	}
+
+	var buf bytes.Buffer
+	err = json.Indent(&buf, b, "", " ")
 	if err != nil {
 		return "", err
 	}
 
-	return string(pretty.Bytes()) + "\n", nil
+	return string(buf.Bytes()) + "\n", nil
 }

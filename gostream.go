@@ -13,12 +13,12 @@ import (
 
 type GoStream struct {
 	ctx     context.Context
-	config  Config
+	config  *Config
 	handler []Handler
 	cancel  func()
 }
 
-func NewGoStream(config Config) *GoStream {
+func NewGoStream(config *Config) *GoStream {
 	ctx, cancel := context.WithCancel(context.Background())
 	handler := []Handler{}
 
