@@ -33,7 +33,7 @@ func NewOutput(config *Config) Output {
 		logging, err := logging.NewClient(ctx, config.ProjectID)
 		if err != nil {
 			log.Println(err)
-			return &OutputStdOut{}
+			return &OutputStdOut{config.Pretty}
 		}
 		logger := logging.Logger(config.Logger)
 		return &OutputLogging{logging, logger, config.Pretty}

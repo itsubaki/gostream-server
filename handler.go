@@ -52,7 +52,7 @@ func (h *RequestHandler) POST(c *gin.Context) {
 }
 
 func (h *RequestHandler) GET(c *gin.Context) {
-	json, err := Json(h.stream.Window()[0].Event())
+	json, err := Json(h.stream.Window()[0].Event(), true)
 	if err != nil {
 		log.Println(err)
 		c.String(http.StatusInternalServerError, err.Error())
