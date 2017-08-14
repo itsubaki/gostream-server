@@ -14,7 +14,9 @@ spec:
         - name: gostream
           image: IMAGES
           env:
-            - name: GET_HOSTS_FROM
-              value: dns
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: ./credential.json
+            - name: GIN_MODE
+              value: release
           ports:
             - containerPort: 1234

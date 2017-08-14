@@ -46,9 +46,10 @@ func NewGoStream(config *Config) *GoStream {
 }
 
 func (s *GoStream) Run() {
-	router := gin.Default()
+	router := gin.New()
 	for _, h := range s.handler {
 		router.POST(h.URI(), h.POST)
+		router.GET(h.URI(), h.GET)
 		go h.Listen()
 	}
 	router.Run(s.config.Port)
