@@ -33,7 +33,7 @@ func NewOutput(config *Config) Output {
 		logging, err := logging.NewClient(ctx, config.ProjectID)
 		if err != nil {
 			log.Println(err)
-			return &OutputStdOut{}
+			return &OutputStdOut{config.Pretty}
 		}
 		logger := logging.Logger(config.Logger)
 		return &OutputLogging{logging, logger, config.Pretty}
@@ -65,7 +65,8 @@ func (o *OutputLogging) Update(event []cep.Event) {
 
 func (o *OutputLogging) Close() {
 	o.logger.Flush()
-	if err := o.client.Close(); err != nil {
+	err := o.client.Close()
+	if err != nil {
 		log.Println(err)
 	}
 }
@@ -97,7 +98,8 @@ func (o *OutputPubSub) Update(event []cep.Event) {
 }
 
 func (o *OutputPubSub) Close() {
-	if err := o.client.Close(); err != nil {
+	err := o.client.Close()
+	if err != nil {
 		log.Println(err)
 	}
 }
