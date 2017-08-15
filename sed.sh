@@ -7,4 +7,4 @@ fi
 
 ImageID=$1
 
-sed -e s@"IMAGES"@${ImageID}@g kube/deployment.yml > kube/deployment.yml.tmp
+sed -e s@"IMAGES"@${ImageID}@g gostream.yml > gostream.yml.tmp

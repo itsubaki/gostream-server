@@ -11,18 +11,13 @@ $ go get github.com/itsubaki/gostream
 
 ```console
 $ sh ./sed.sh ${YOUR_DOCKER_IMAGE}
-$ kubectl create -f kube/deployment.yml.tmp
-$ kubectl create -f kube/service.yml
-$ kubectl create -f kube/ingress.yml
+$ kubectl create -f gostream.yml.tmp
 ```
 
 ## Output
 
  - ```stdout```(default)
- - gcp
-    + ```logging```
-    + ```pubsub```
-    + ```spanner```
+ - ```logging```, ```pubsub```, ```spanner```
 
 ```console
 $ export GOOGLE_APPLICATION_CREDENTIALS=`pwd`/credential.json
