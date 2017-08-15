@@ -1,37 +1,41 @@
 package main
 
 import (
-	"context"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"golang.org/x/net/context"
+
 	"github.com/gin-gonic/gin"
 	cep "github.com/itsubaki/gocep"
+	"github.com/itsubaki/gostream/config"
+	hdl "github.com/itsubaki/gostream/handler"
+	"github.com/itsubaki/gostream/output"
 )
 
 type GoStream struct {
 	ctx     context.Context
-	config  *Config
-	handler []Handler
+	config  *config.Config
+	handler []hdl.Handler
 	cancel  func()
 }
 
-func NewGoStream(config *Config) *GoStream {
+func NewGoStream(config *config.Config) *GoStream {
 	ctx, cancel := context.WithCancel(context.Background())
-	handler := []Handler{}
+	handler := []hdl.Handler{}
 
 	window := cep.NewTimeWindow(3*time.Second, 1024)
 	window.SetFunction(cep.Count{As: "cnt"})
 	stream := cep.NewStream(1024)
 	stream.SetWindow(window)
 
-	h := &RequestHandler{
-		ctx,
-		"",
-		stream,
-		NewOutput(config),
+	h := &hdl.DefaultHandler{
+		Context: ctx,
+		Uri:     "",
+		Stream:  stream,
+		Out:     output.New(config),
 	}
 	handler = append(handler, h)
 
