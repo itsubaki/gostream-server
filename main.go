@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	c := config.NewConfig()
+	c := config.New()
 	log.Println("config: " + c.String())
 
 	gost := NewGoStream(c)

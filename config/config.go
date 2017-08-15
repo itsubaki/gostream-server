@@ -16,7 +16,7 @@ type Config struct {
 	Pretty    bool
 }
 
-func NewConfig() *Config {
+func New() *Config {
 	port := Get("GOSTREAM_PORT", "1234")
 	output := Get("GOSTREAM_OUTPUT", "stdout")
 	projectID := Get("GOSTREAM_PROJECT_ID", "")
