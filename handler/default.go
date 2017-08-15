@@ -12,26 +12,30 @@ import (
 )
 
 type DefaultHandler struct {
-	Context context.Context
-	Uri     string
-	Stream  *cep.Stream
-	Out     output.Output
+	ctx    context.Context
+	uri    string
+	stream *cep.Stream
+	out    output.Output
+}
+
+func NewDefaultHandler(ctx context.Context, uri string, st *cep.Stream, out output.Output) *DefaultHandler {
+	return &DefaultHandler{ctx, uri, st, out}
 }
 
 func (h *DefaultHandler) URI() string {
-	return h.Uri
+	return h.uri
 }
 
 func (h *DefaultHandler) Output() output.Output {
-	return h.Out
+	return h.out
 }
 
 func (h *DefaultHandler) Listen() {
 	for {
 		select {
-		case <-h.Context.Done():
+		case <-h.ctx.Done():
 			break
-		case e := <-h.Stream.Output():
+		case e := <-h.stream.Output():
 			h.Output().Update(e)
 		}
 	}
@@ -42,11 +46,11 @@ func (h *DefaultHandler) POST(c *gin.Context) {
 	for k, v := range c.Request.Header {
 		m[k] = v[0]
 	}
-	h.Stream.Input() <- cep.MapEvent{Record: m}
+	h.stream.Input() <- cep.MapEvent{Record: m}
 }
 
 func (h *DefaultHandler) GET(c *gin.Context) {
-	json, err := config.Json(h.Stream.Window()[0].Event(), true)
+	json, err := config.Json(h.stream.Window()[0].Event(), true)
 	if err != nil {
 		log.Println(err)
 		c.String(http.StatusInternalServerError, err.Error())

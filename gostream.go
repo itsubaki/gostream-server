@@ -24,19 +24,20 @@ type GoStream struct {
 
 func NewGoStream(config *config.Config) *GoStream {
 	ctx, cancel := context.WithCancel(context.Background())
-	handler := []hdl.Handler{}
 
 	window := cep.NewTimeWindow(3*time.Second, 1024)
 	window.SetFunction(cep.Count{As: "cnt"})
 	stream := cep.NewStream(1024)
 	stream.SetWindow(window)
 
-	h := &hdl.DefaultHandler{
-		Context: ctx,
-		Uri:     "",
-		Stream:  stream,
-		Out:     output.New(config),
-	}
+	h := hdl.NewDefaultHandler(
+		ctx,
+		"",
+		stream,
+		output.New(config),
+	)
+
+	handler := []hdl.Handler{}
 	handler = append(handler, h)
 
 	gost := &GoStream{
