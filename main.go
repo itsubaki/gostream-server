@@ -1,9 +1,13 @@
 package main
 
-import "log"
+import (
+	"log"
+
+	"github.com/itsubaki/gostream/config"
+)
 
 func main() {
-	c := NewConfig()
+	c := config.New()
 	log.Println("config: " + c.String())
 
 	gost := NewGoStream(c)
