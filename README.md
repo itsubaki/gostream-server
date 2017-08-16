@@ -22,8 +22,7 @@ $ kubectl create -f kube/ingress.yml
 
 ## Output
 
- - ```stdout```, ```logging```, ```pubsub```, ```spanner```
- - default is ```stdout```
+ - ```stdout```(default), ```logging```, ```pubsub```, ```spanner```
 
 ```console
 $ export GOOGLE_APPLICATION_CREDENTIALS=`pwd`/credential.json
