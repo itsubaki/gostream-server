@@ -16,8 +16,7 @@ $ kubectl create -f gostream.yml.tmp
 
 ## Output
 
- - ```stdout```(default)
- - ```logging```, ```pubsub```, ```spanner```
+ - ```stdout```(default), ```logging```, ```pubsub```, ```spanner```
 
 ```console
 $ export GOOGLE_APPLICATION_CREDENTIALS=`pwd`/credential.json
