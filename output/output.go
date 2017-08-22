@@ -16,7 +16,7 @@ type Output interface {
 	Close()
 }
 
-func New(config *config.Config) Output {
+func New(config *config.OutputConfig) Output {
 	ctx := context.Background()
 
 	if config.Output == "pubsub" {

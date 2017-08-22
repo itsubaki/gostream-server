@@ -1,15 +1,14 @@
 package main
 
 import (
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"golang.org/x/net/context"
 
 	"github.com/gin-gonic/gin"
-	cep "github.com/itsubaki/gocep"
 	"github.com/itsubaki/gostream/config"
 	hdl "github.com/itsubaki/gostream/handler"
 	"github.com/itsubaki/gostream/output"
@@ -17,47 +16,37 @@ import (
 
 type GoStream struct {
 	ctx     context.Context
-	config  *config.Config
-	handler []hdl.Handler
 	cancel  func()
+	port    string
+	handler []hdl.Handler
 }
 
 func NewGoStream(config *config.Config) *GoStream {
 	ctx, cancel := context.WithCancel(context.Background())
-
-	window := cep.NewTimeWindow(3*time.Second, 1024)
-	window.SetFunction(cep.Count{As: "cnt"})
-	stream := cep.NewStream(1024)
-	stream.SetWindow(window)
-
-	h := hdl.NewDefaultHandler(
-		ctx,
-		"",
-		stream,
-		output.New(config),
-	)
-
 	handler := []hdl.Handler{}
-	handler = append(handler, h)
 
-	gost := &GoStream{
-		ctx,
-		config,
-		handler,
-		cancel,
+	out := output.New(config.OutConfig)
+	if h, err := hdl.NewDefaultHandler(ctx, "", out); err != nil {
+		log.Println(err)
+	} else {
+		handler = append(handler, h)
 	}
+
+	gost := &GoStream{ctx, cancel, config.Port, handler}
 
 	return gost
 }
 
 func (s *GoStream) Run() {
 	router := gin.New()
+
 	for _, h := range s.handler {
 		router.POST(h.URI(), h.POST)
 		router.GET(h.URI(), h.GET)
 		go h.Listen()
 	}
-	router.Run(s.config.Port)
+
+	router.Run(s.port)
 }
 
 func (s *GoStream) ShutdownHook() {

@@ -37,10 +37,3 @@ $ export GOSTREAM_LOGGING_LOGGER=${YOUR_GCP_LOGGING_LOGGER}
 $ export GOSTREAM_OUTPUT=pubsub
 $ export GOSTREAM_PUBSUB_TOPIC=${YOUR_GCP_PUBSUB_TOPIC}
 ```
-
-### Spanner
-
-```console
-$ export GOSTREAM_OUTPUT=spanner
-$ export GOSTREAM_SPANNER=${YOUR_GCP_SPANNER}
-```

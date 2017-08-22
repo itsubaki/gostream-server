@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 
+	yaml "gopkg.in/yaml.v2"
+
 	cep "github.com/itsubaki/gocep"
 )
 
@@ -24,4 +26,12 @@ func Json(event []cep.Event, pretty bool) (string, error) {
 	}
 
 	return string(buf.Bytes()) + "\n", nil
+}
+
+func Yaml(data interface{}) (string, error) {
+	b, err := yaml.Marshal(data)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
 }

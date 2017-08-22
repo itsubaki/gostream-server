@@ -9,6 +9,10 @@ import (
 
 type Config struct {
 	Port      string
+	OutConfig *OutputConfig
+}
+
+type OutputConfig struct {
 	Output    string
 	ProjectID string
 	Topic     string
@@ -25,12 +29,14 @@ func New() *Config {
 	pretty := GetBool("GOSTREAM_OUTPUT_PRETTY", false)
 
 	return &Config{
-		Port:      ":" + port,
-		Output:    output,
-		ProjectID: projectID,
-		Topic:     topic,
-		Logger:    logger,
-		Pretty:    pretty,
+		Port: ":" + port,
+		OutConfig: &OutputConfig{
+			Output:    output,
+			ProjectID: projectID,
+			Topic:     topic,
+			Logger:    logger,
+			Pretty:    pretty,
+		},
 	}
 }
 
