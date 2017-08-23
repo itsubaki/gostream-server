@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -21,20 +20,22 @@ type GoStream struct {
 	handler []hdl.Handler
 }
 
-func NewGoStream(config *config.Config) *GoStream {
+func NewGoStream(config *config.Config) (*GoStream, error) {
 	ctx, cancel := context.WithCancel(context.Background())
-	handler := []hdl.Handler{}
+	gost := &GoStream{ctx, cancel, config.Port, []hdl.Handler{}}
 
 	out := output.New(config.OutConfig)
-	if h, err := hdl.NewDefaultHandler(ctx, "", out); err != nil {
-		log.Println(err)
-	} else {
-		handler = append(handler, h)
+	h, err := hdl.NewDefaultHandler("", out)
+	if err != nil {
+		return nil, err
 	}
+	gost.AddHandler(h)
 
-	gost := &GoStream{ctx, cancel, config.Port, handler}
+	return gost, nil
+}
 
-	return gost
+func (s *GoStream) AddHandler(h hdl.Handler) {
+	s.handler = append(s.handler, h)
 }
 
 func (s *GoStream) Run() {
@@ -62,6 +63,6 @@ func (s *GoStream) ShutdownHook() {
 func (s *GoStream) Close() {
 	s.cancel()
 	for _, h := range s.handler {
-		h.Output().Close()
+		h.Close()
 	}
 }

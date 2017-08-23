@@ -9,6 +9,7 @@ type Handler interface {
 	URI() string
 	Output() output.Output
 	Listen()
+	Close()
 	POST(c *gin.Context)
 	GET(c *gin.Context)
 }

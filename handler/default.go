@@ -13,12 +13,14 @@ import (
 
 type DefaultHandler struct {
 	ctx    context.Context
+	cancel func()
 	uri    string
 	out    output.Output
 	stream *cep.Stream
 }
 
-func NewDefaultHandler(ctx context.Context, uri string, out output.Output) (*DefaultHandler, error) {
+func NewDefaultHandler(uri string, out output.Output) (*DefaultHandler, error) {
+	ctx, cancel := context.WithCancel(context.Background())
 
 	q := "select * from MapEvent.length(3)"
 	stmt, err := cep.NewParser(q).Parse()
@@ -27,7 +29,7 @@ func NewDefaultHandler(ctx context.Context, uri string, out output.Output) (*Def
 	}
 	stream := stmt.NewStream(1024)
 
-	return &DefaultHandler{ctx, uri, out, stream}, nil
+	return &DefaultHandler{ctx, cancel, uri, out, stream}, nil
 }
 
 func (h *DefaultHandler) URI() string {
@@ -36,6 +38,11 @@ func (h *DefaultHandler) URI() string {
 
 func (h *DefaultHandler) Output() output.Output {
 	return h.out
+}
+
+func (h *DefaultHandler) Close() {
+	h.cancel()
+	h.out.Close()
 }
 
 func (h *DefaultHandler) Listen() {
