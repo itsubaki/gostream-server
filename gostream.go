@@ -39,22 +39,21 @@ func (s *GoStream) AddHandler(h hdl.Handler) {
 }
 
 func (s *GoStream) Run() {
-	router := gin.New()
+	engine := gin.New()
 
 	for _, h := range s.handler {
-		router.POST(h.URI(), h.POST)
-		router.GET(h.URI(), h.GET)
+		h.Add(engine)
 		go h.Listen()
 	}
 
-	router.Run(s.port)
+	engine.Run(s.port)
 }
 
 func (s *GoStream) ShutdownHook() {
 	c := make(chan os.Signal, 2)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
-		<-c // blocking
+		<-c
 		s.Close()
 		os.Exit(0)
 	}()

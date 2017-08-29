@@ -12,4 +12,5 @@ type Handler interface {
 	Close()
 	POST(c *gin.Context)
 	GET(c *gin.Context)
+	Add(r *gin.Engine)
 }

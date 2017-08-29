@@ -56,6 +56,11 @@ func (h *DefaultHandler) Listen() {
 	}
 }
 
+func (h *DefaultHandler) Add(r *gin.Engine) {
+	r.POST(h.URI(), h.POST)
+	r.GET(h.URI(), h.GET)
+}
+
 func (h *DefaultHandler) POST(c *gin.Context) {
 	m := make(map[string]interface{})
 	for k, v := range c.Request.Header {
