@@ -21,21 +21,14 @@ type OutputConfig struct {
 }
 
 func New() *Config {
-	port := Get("GOSTREAM_PORT", "1234")
-	output := Get("GOSTREAM_OUTPUT", "stdout")
-	projectID := Get("GOSTREAM_PROJECT_ID", "")
-	topic := Get("GOSTREAM_PUBSUB_TOPIC", "")
-	logger := Get("GOSTREAM_LOGGING_LOGGER", "gostream")
-	pretty := GetBool("GOSTREAM_OUTPUT_PRETTY", false)
-
 	return &Config{
-		Port: ":" + port,
+		Port: Get("GOSTREAM_PORT", ":1234"),
 		OutConfig: &OutputConfig{
-			Output:    output,
-			ProjectID: projectID,
-			Topic:     topic,
-			Logger:    logger,
-			Pretty:    pretty,
+			Output:    Get("GOSTREAM_OUTPUT", "stdout"),
+			ProjectID: Get("GOSTREAM_PROJECT_ID", ""),
+			Topic:     Get("GOSTREAM_PUBSUB_TOPIC", ""),
+			Logger:    Get("GOSTREAM_LOGGING_LOGGER", "gostream"),
+			Pretty:    GetBool("GOSTREAM_OUTPUT_PRETTY", false),
 		},
 	}
 }
