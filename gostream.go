@@ -6,15 +6,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"golang.org/x/net/context"
-
 	"github.com/gin-gonic/gin"
 	"github.com/itsubaki/gocep"
 )
 
 type GoStream struct {
-	ctx    context.Context
-	cancel func()
 	engine *gin.Engine
 	window WindowSet
 	port   string
@@ -38,17 +34,16 @@ func (ws *WindowSet) Get(name string) (gocep.Window, error) {
 }
 
 func NewGoStream(config *Config) *GoStream {
-	ctx, cancel := context.WithCancel(context.Background())
 	wset := WindowSet{make(map[string]gocep.Window)}
-	return &GoStream{ctx, cancel, gin.New(), wset, config.Port}
+	return &GoStream{gin.New(), wset, config.Port}
 }
 
 func (gost *GoStream) Run() {
-	gost.shutdownHook()
+	gost.ShutdownHook()
 	gost.engine.Run(gost.port)
 }
 
-func (gost *GoStream) shutdownHook() {
+func (gost *GoStream) ShutdownHook() {
 	c := make(chan os.Signal, 2)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
@@ -59,5 +54,7 @@ func (gost *GoStream) shutdownHook() {
 }
 
 func (gost *GoStream) Close() {
-	gost.cancel()
+	for name := range gost.window.set {
+		gost.window.set[name].Close()
+	}
 }
