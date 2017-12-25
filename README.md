@@ -27,5 +27,5 @@ $ curl -X POST localhost:1234 -d '{"time":"2017-12-25T12:29:27Z", "Level": 4, "M
 
 ```console
 $ curl localhost:1234
-{"Time":"2017-12-25T15:40:49.949279107+09:00","Underlying":{"time":"2017-12-25T12:29:27Z","level":4,"message":"foobar"},"Record":{"count":1}}
+{"Time":"2017-12-25T15:40:49.949279107+09:00","Underlying":{"time":"2017-12-25T12:29:27Z","level":4,"message":"foobar"},"Record":{"count(*)":1}}
 ```

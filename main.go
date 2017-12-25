@@ -26,7 +26,7 @@ func main() {
 	w := gocep.NewTimeWindow(10 * time.Second)
 	w.SetSelector(gocep.EqualsType{Accept: LogEvent{}})
 	w.SetSelector(gocep.LargerThanInt{Name: "Level", Value: 2})
-	w.SetFunction(gocep.Count{As: "count"})
+	w.SetFunction(gocep.Count{As: "count(*)"})
 	gost.window.Put("/log/count", w)
 
 	gost.engine.POST("/", func(c *gin.Context) {
