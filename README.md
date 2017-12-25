@@ -10,7 +10,7 @@ $ go get github.com/itsubaki/gostream
 ## Example
 
 ```console
-export GOSTREAM_LISTEN_PORT=1234
+$ export GOSTREAM_LISTEN_PORT=1234
 $ ./gostream
 config: {"Port":":1234"}
 2017-12-25 15:40:44.608425401 +0900 JST
