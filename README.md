@@ -7,32 +7,25 @@ The Stream Processing Service written in Go
 $ go get github.com/itsubaki/gostream
 ```
 
-## k8s
+## Example
 
 ```console
-$ sh ./sed.sh ${YOUR_DOCKER_IMAGE}
-$ kubectl create -f gostream.yml.tmp
+export GOSTREAM_LISTEN_PORT=1234
+$ ./gostream
+config: {"Port":":1234"}
+2017-12-25 15:40:44.608425401 +0900 JST
 ```
 
-## Output
-
- - ```stdout```(default), ```logging```, ```pubsub```, ```spanner```
+ - Publish
 
 ```console
-$ export GOOGLE_APPLICATION_CREDENTIALS=`pwd`/credential.json
-$ export GOSTREAM_PROJECT_ID=${YOUR_GCP_PROJECT_ID}
+$ curl -X POST localhost:1234 -d '{"time":"2017-12-25T12:29:27Z", "Level": 4, "Message":"foobar"}'
+{ "ok" }
 ```
 
-### Logging
+ - Subscribe
 
 ```console
-$ export GOSTREAM_OUTPUT=logging
-$ export GOSTREAM_LOGGING_LOGGER=${YOUR_GCP_LOGGING_LOGGER}
-```
-
-### PubSub
-
-```console
-$ export GOSTREAM_OUTPUT=pubsub
-$ export GOSTREAM_PUBSUB_TOPIC=${YOUR_GCP_PUBSUB_TOPIC}
+$ curl localhost:1234
+{"Time":"2017-12-25T15:40:49.949279107+09:00","Underlying":{"time":"2017-12-25T12:29:27Z","level":4,"message":"foobar"},"Record":{"count":1}}
 ```

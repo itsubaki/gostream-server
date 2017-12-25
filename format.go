@@ -1,15 +1,13 @@
-package config
+package main
 
 import (
 	"bytes"
 	"encoding/json"
 
 	yaml "gopkg.in/yaml.v2"
-
-	cep "github.com/itsubaki/gocep"
 )
 
-func Json(event []cep.Event, pretty bool) (string, error) {
+func Json(event interface{}, pretty bool) (string, error) {
 	b, err := json.Marshal(event)
 	if err != nil {
 		return "", err
