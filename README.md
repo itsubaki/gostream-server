@@ -20,12 +20,12 @@ config: {"Port":":1234"}
 
 ```console
 $ curl -X POST localhost:1234 -d '{"time":"2017-12-25T12:29:27Z", "Level": 4, "Message":"foobar"}'
-{ "ok" }
+{"ID":"55e6d37a-9215-40fa-941f-f6f8224e8283"}
 ```
 
  - Subscribe
 
 ```console
 $ curl localhost:1234
-{"Time":"2017-12-25T15:40:49.949279107+09:00","Underlying":{"time":"2017-12-25T12:29:27Z","level":4,"message":"foobar"},"Record":{"count(*)":1}}
+{"Time":"2017-12-25T15:40:49.949279107+09:00","Underlying":{"ID":"55e6d37a-9215-40fa-941f-f6f8224e8283","time":"2017-12-25T12:29:27Z","level":4,"message":"foobar"},"Record":{"count(*)":1}}
 ```

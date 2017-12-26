@@ -8,13 +8,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/itsubaki/gocep"
+	uuid "github.com/satori/go.uuid"
 )
-
-type LogEvent struct {
-	Time    time.Time `json:"time"`
-	Level   int       `json:"level"`
-	Message string    `json:"message"`
-}
 
 func main() {
 	c := NewConfig()
@@ -27,7 +22,7 @@ func main() {
 	w.SetSelector(gocep.EqualsType{Accept: LogEvent{}})
 	w.SetSelector(gocep.LargerThanInt{Name: "Level", Value: 2})
 	w.SetFunction(gocep.Count{As: "count(*)"})
-	gost.window.Put("/log/count", w)
+	gost.Register("/", w)
 
 	gost.engine.POST("/", func(c *gin.Context) {
 		b, err := ioutil.ReadAll(c.Request.Body)
@@ -41,19 +36,22 @@ func main() {
 			c.JSON(400, unerr.Error())
 			return
 		}
+		event.ID = uuid.NewV4().String()
 
-		w, err := gost.window.Get("/log/count")
+		uri := c.Request.RequestURI
+		w, err := gost.Window(uri)
 		if err != nil {
 			c.JSON(400, err)
 			return
 		}
 
 		w.Input() <- event
-		c.JSON(200, "ok")
+		c.JSON(200, RequestID{event.ID})
 	})
 
 	gost.engine.GET("/", func(c *gin.Context) {
-		w, err := gost.window.Get("/log/count")
+		uri := c.Request.RequestURI
+		w, err := gost.Window(uri)
 		if err != nil {
 			c.JSON(400, err)
 			return

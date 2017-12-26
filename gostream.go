@@ -12,30 +12,25 @@ import (
 
 type GoStream struct {
 	engine *gin.Engine
-	window WindowSet
+	window map[string]gocep.Window
 	port   string
 }
 
-type WindowSet struct {
-	set map[string]gocep.Window
+func NewGoStream(config *Config) *GoStream {
+	return &GoStream{gin.New(), make(map[string]gocep.Window), config.Port}
 }
 
-func (ws *WindowSet) Put(name string, w gocep.Window) {
-	ws.set[name] = w
+func (gost *GoStream) Register(name string, w gocep.Window) {
+	gost.window[name] = w
 }
 
-func (ws *WindowSet) Get(name string) (gocep.Window, error) {
-	v, ok := ws.set[name]
+func (gost *GoStream) Window(name string) (gocep.Window, error) {
+	v, ok := gost.window[name]
 	if ok {
 		return v, nil
 	}
 
 	return nil, fmt.Errorf("%s not found.", name)
-}
-
-func NewGoStream(config *Config) *GoStream {
-	wset := WindowSet{make(map[string]gocep.Window)}
-	return &GoStream{gin.New(), wset, config.Port}
 }
 
 func (gost *GoStream) Run() {
@@ -54,7 +49,7 @@ func (gost *GoStream) ShutdownHook() {
 }
 
 func (gost *GoStream) Close() {
-	for name := range gost.window.set {
-		gost.window.set[name].Close()
+	for name := range gost.window {
+		gost.window[name].Close()
 	}
 }
