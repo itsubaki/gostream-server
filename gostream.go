@@ -1,17 +1,13 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/itsubaki/gocep"
-	uuid "github.com/satori/go.uuid"
 )
 
 type GoStream struct {
@@ -24,28 +20,17 @@ func NewGoStream(config *Config) *GoStream {
 	return &GoStream{gin.New(), make(map[string]gocep.Window), config.Port}
 }
 
-func (gost *GoStream) Register(name string, w gocep.Window) {
-	gost.window[name] = w
+func (gost *GoStream) Register(path string, w gocep.Window) {
+	gost.window[path] = w
 }
 
-func (gost *GoStream) Window(name string) (gocep.Window, error) {
-	v, ok := gost.window[name]
+func (gost *GoStream) Window(path string) (gocep.Window, error) {
+	v, ok := gost.window[path]
 	if ok {
 		return v, nil
 	}
 
-	return nil, fmt.Errorf("%s not found.", name)
-}
-
-func (gost *GoStream) Run() error {
-	gost.ShutdownHook()
-
-	err := gost.Setup()
-	if err != nil {
-		return err
-	}
-
-	return gost.engine.Run(gost.port)
+	return nil, fmt.Errorf("%s not found.", path)
 }
 
 func (gost *GoStream) ShutdownHook() {
@@ -64,51 +49,15 @@ func (gost *GoStream) Close() {
 	}
 }
 
-func (gost *GoStream) Setup() error {
+func (gost *GoStream) Run() error {
+	gost.ShutdownHook()
+	return gost.engine.Run(gost.port)
+}
 
-	// select count(*) from LogEvent(10sec) where Level > 2
-	w := gocep.NewTimeWindow(10 * time.Second)
-	w.SetSelector(gocep.EqualsType{Accept: LogEvent{}})
-	w.SetSelector(gocep.LargerThanInt{Name: "Level", Value: 2})
-	w.SetFunction(gocep.Count{As: "count(*)"})
-	gost.Register("/", w)
+func (gost *GoStream) POST(path string, handlers ...gin.HandlerFunc) {
+	gost.engine.POST(path, handlers...)
+}
 
-	gost.engine.POST("/", func(c *gin.Context) {
-		b, err := ioutil.ReadAll(c.Request.Body)
-		if err != nil {
-			c.JSON(400, err)
-			return
-		}
-
-		var event LogEvent
-		if unerr := json.Unmarshal(b, &event); unerr != nil {
-			c.JSON(400, unerr.Error())
-			return
-		}
-		event.ID = uuid.NewV4().String()
-
-		uri := c.Request.RequestURI
-		w, err := gost.Window(uri)
-		if err != nil {
-			c.JSON(400, err)
-			return
-		}
-
-		w.Input() <- event
-		c.JSON(200, RequestID{event.ID})
-	})
-
-	gost.engine.GET("/", func(c *gin.Context) {
-		uri := c.Request.RequestURI
-		w, err := gost.Window(uri)
-		if err != nil {
-			c.JSON(400, err)
-			return
-		}
-
-		events := <-w.Output()
-		c.JSON(200, gocep.Newest(events))
-	})
-
-	return nil
+func (gost *GoStream) GET(path string, handlers ...gin.HandlerFunc) {
+	gost.engine.GET(path, handlers...)
 }
