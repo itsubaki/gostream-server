@@ -55,8 +55,12 @@ func SetupRouter(gost *GoStream, r *Router) error {
 			return
 		}
 
-		events := <-w.Output()
-		c.JSON(200, gocep.Newest(events))
+		select {
+		case events := <-w.Output():
+			c.JSON(200, gocep.Newest(events))
+		default:
+			c.JSON(200, gocep.Event{Time: time.Now(), Underlying: "no events"})
+		}
 	})
 
 	gost.POST(r.Path, func(c *gin.Context) {
