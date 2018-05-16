@@ -2,19 +2,38 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
+
+	yaml "gopkg.in/yaml.v2"
 )
 
 type Config struct {
-	Port string
+	Port   string   `yaml:"port"`
+	Router []Router `yaml:"router"`
 }
 
-func NewConfig() *Config {
-	return &Config{
-		Port: GetString("GOSTREAM_LISTEN_PORT", ":1234"),
+type Router struct {
+	Path  string `yaml:"path"`
+	Query string `yaml:"query"`
+}
+
+func NewConfig() (*Config, error) {
+	p := GetString("GOSTREAM_CONFIG", "gostream.yml")
+	buf, err := ioutil.ReadFile(p)
+	if err != nil {
+		return nil, fmt.Errorf("read %s: %v", p, err)
 	}
+
+	var config Config
+	if err := yaml.Unmarshal(buf, &config); err != nil {
+		return nil, fmt.Errorf("unmarshal %s: %v", p, err)
+	}
+
+	return &config, nil
 }
 
 func (c *Config) String() string {

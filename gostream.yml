@@ -1,0 +1,4 @@
+port: ":1234"
+router:
+  - path: "/"
+    query: "select count(*) from LogEvent.time(10 sec)"
