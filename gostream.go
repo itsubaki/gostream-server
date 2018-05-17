@@ -13,14 +13,25 @@ import (
 type GoStream struct {
 	engine *gin.Engine
 	window map[string]gocep.Window
-	port   string
+	plugin map[string]GoStreamPlugin
+	config *Config
 }
 
 func NewGoStream(config *Config) *GoStream {
-	return &GoStream{gin.New(), make(map[string]gocep.Window), config.Port}
+	gost := &GoStream{
+		gin.New(),
+		make(map[string]gocep.Window),
+		make(map[string]GoStreamPlugin),
+		config,
+	}
+	return gost
 }
 
-func (gost *GoStream) Register(path string, w gocep.Window) {
+func (gost *GoStream) SetPlugin(name string, plugin GoStreamPlugin) {
+	gost.plugin[name] = plugin
+}
+
+func (gost *GoStream) SetWindow(path string, w gocep.Window) {
 	gost.window[path] = w
 }
 
@@ -30,7 +41,7 @@ func (gost *GoStream) Window(path string) (gocep.Window, error) {
 		return v, nil
 	}
 
-	return nil, fmt.Errorf("%s not found.", path)
+	return nil, fmt.Errorf("window not found=%s", path)
 }
 
 func (gost *GoStream) ShutdownHook() {
@@ -50,8 +61,20 @@ func (gost *GoStream) Close() {
 }
 
 func (gost *GoStream) Run() error {
+	for _, r := range gost.config.Router {
+		p, ok := gost.plugin[r.Plugin]
+		if !ok {
+			fmt.Printf("plugin not found=%s\n", r.Plugin)
+			continue
+		}
+
+		if err := p.Setup(gost, &r); err != nil {
+			fmt.Printf("setup plugin %v: %v\n", r, err)
+		}
+	}
+
 	gost.ShutdownHook()
-	return gost.engine.Run(gost.port)
+	return gost.engine.Run(gost.config.Port)
 }
 
 func (gost *GoStream) POST(path string, handlers ...gin.HandlerFunc) {

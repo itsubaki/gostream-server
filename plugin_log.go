@@ -23,6 +23,8 @@ type RequestID struct {
 	ID string
 }
 
+type LogEventPlugin struct{}
+
 func NewLogEvent(body io.ReadCloser) (LogEvent, error) {
 	b, err := ioutil.ReadAll(body)
 	if err != nil {
@@ -38,7 +40,7 @@ func NewLogEvent(body io.ReadCloser) (LogEvent, error) {
 	return event, nil
 }
 
-func SetupRouter(gost *GoStream, r *Router) error {
+func (h *LogEventPlugin) Setup(gost *GoStream, r *Router) error {
 	p := gocep.NewParser()
 	p.Register("LogEvent", LogEvent{})
 
@@ -46,7 +48,7 @@ func SetupRouter(gost *GoStream, r *Router) error {
 	if err != nil {
 		return fmt.Errorf("parse %s: %v", r.Query, err)
 	}
-	gost.Register(r.Path, s.New(1024))
+	gost.SetWindow(r.Path, s.New(1024))
 
 	gost.GET(r.Path, func(c *gin.Context) {
 		w, err := gost.Window(c.Request.RequestURI)
@@ -59,7 +61,7 @@ func SetupRouter(gost *GoStream, r *Router) error {
 		case events := <-w.Output():
 			c.JSON(200, gocep.Newest(events))
 		default:
-			c.JSON(200, gocep.Event{Time: time.Now(), Underlying: "no events"})
+			c.JSON(200, gocep.Event{Time: time.Now()})
 		}
 	})
 

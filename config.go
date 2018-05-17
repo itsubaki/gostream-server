@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
-	"strconv"
 
 	yaml "gopkg.in/yaml.v2"
 )
@@ -17,8 +15,9 @@ type Config struct {
 }
 
 type Router struct {
-	Path  string `yaml:"path"`
-	Query string `yaml:"query"`
+	Plugin string `yaml:"plugin"`
+	Path   string `yaml:"path"`
+	Query  string `yaml:"query"`
 }
 
 func NewConfig() (*Config, error) {
@@ -50,17 +49,4 @@ func GetString(env, init string) string {
 		return init
 	}
 	return val
-}
-
-func GetBool(env string, init bool) bool {
-	val := os.Getenv(env)
-	if len(val) == 0 {
-		return init
-	}
-	ret, err := strconv.ParseBool(val)
-	if err != nil {
-		log.Println(err)
-		return init
-	}
-	return ret
 }

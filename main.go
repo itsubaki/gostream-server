@@ -2,29 +2,22 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 )
 
 func main() {
 	c, err := NewConfig()
 	if err != nil {
-		fmt.Printf("new config: %v", err)
+		fmt.Printf("new config: %v\n", err)
 		os.Exit(1)
 	}
-	log.Println("config: " + c.String())
+	fmt.Printf("config=%s\n", c.String())
 
 	gost := NewGoStream(c)
-
-	for _, r := range c.Router {
-		if err := SetupRouter(gost, &r); err != nil {
-			fmt.Printf("setup handler %v: %v", r, err)
-			os.Exit(1)
-		}
-	}
+	gost.plugin["LogEventPlugin"] = &LogEventPlugin{}
 
 	if err := gost.Run(); err != nil {
-		fmt.Println(err)
+		fmt.Printf("run: %v\n", err)
 		os.Exit(1)
 	}
 }

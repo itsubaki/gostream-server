@@ -7,7 +7,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-func Json(event interface{}, pretty bool) (string, error) {
+func JSON(event interface{}, pretty bool) (string, error) {
 	b, err := json.Marshal(event)
 	if err != nil {
 		return "", err
@@ -26,7 +26,7 @@ func Json(event interface{}, pretty bool) (string, error) {
 	return string(buf.Bytes()) + "\n", nil
 }
 
-func Yaml(data interface{}) (string, error) {
+func YAML(data interface{}) (string, error) {
 	b, err := yaml.Marshal(data)
 	if err != nil {
 		return "", err
