@@ -14,7 +14,7 @@ func main() {
 	fmt.Printf("config=%s\n", c.String())
 
 	gost := NewGoStream(c)
-	gost.plugin["LogEventPlugin"] = &LogEventPlugin{}
+	gost.SetPlugin("LogEventPlugin", &LogEventPlugin{})
 
 	if err := gost.Run(); err != nil {
 		fmt.Printf("run: %v\n", err)
