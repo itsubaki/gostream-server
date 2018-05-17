@@ -30,6 +30,7 @@ func NewLogEvent(body io.ReadCloser) (LogEvent, error) {
 	if err != nil {
 		return LogEvent{}, err
 	}
+	defer body.Close()
 
 	var event LogEvent
 	if err := json.Unmarshal(b, &event); err != nil {
