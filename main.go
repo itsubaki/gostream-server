@@ -11,7 +11,7 @@ func main() {
 		fmt.Printf("new config: %v\n", err)
 		os.Exit(1)
 	}
-	fmt.Printf("config=%s\n", c.String())
+	fmt.Printf("config=%v\n", c)
 
 	gost := NewGoStream(c)
 	gost.SetPlugin("LogEventPlugin", &LogEventPlugin{})

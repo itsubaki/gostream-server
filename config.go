@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -33,14 +32,6 @@ func NewConfig() (*Config, error) {
 	}
 
 	return &config, nil
-}
-
-func (c *Config) String() string {
-	b, err := json.Marshal(c)
-	if err != nil {
-		return err.Error()
-	}
-	return string(b)
 }
 
 func GetString(env, init string) string {

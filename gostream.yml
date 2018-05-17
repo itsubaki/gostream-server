@@ -2,4 +2,4 @@ port: ":1234"
 router:
   - plugin: LogEventPlugin
     path: "/"
-    query: "select count(*) from LogEvent.time(10 sec)"
+    query: "select count(*) from LogEvent.time(10 sec) where Level > 2"
