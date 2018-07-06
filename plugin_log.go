@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/itsubaki/gocep"
-	uuid "github.com/satori/go.uuid"
 )
 
 type LogEvent struct {
@@ -33,10 +33,16 @@ func NewLogEvent(body io.ReadCloser) (LogEvent, error) {
 	defer body.Close()
 
 	var event LogEvent
-	if err := json.Unmarshal(b, &event); err != nil {
+	if uerr := json.Unmarshal(b, &event); uerr != nil {
+		return LogEvent{}, uerr
+	}
+
+	uuid, err := uuid.NewUUID()
+	if err != nil {
 		return LogEvent{}, err
 	}
-	event.ID = uuid.NewV4().String()
+
+	event.ID = uuid.String()
 
 	return event, nil
 }
