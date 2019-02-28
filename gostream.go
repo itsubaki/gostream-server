@@ -7,12 +7,12 @@ import (
 	"syscall"
 
 	"github.com/gin-gonic/gin"
-	"github.com/itsubaki/gocep"
+	"github.com/itsubaki/gocep/pkg/window"
 )
 
 type GoStream struct {
 	engine *gin.Engine
-	window map[string]gocep.Window
+	window map[string]window.Window
 	plugin map[string]GoStreamPlugin
 	config *Config
 }
@@ -20,7 +20,7 @@ type GoStream struct {
 func NewGoStream(config *Config) *GoStream {
 	gost := &GoStream{
 		gin.New(),
-		make(map[string]gocep.Window),
+		make(map[string]window.Window),
 		make(map[string]GoStreamPlugin),
 		config,
 	}
@@ -31,11 +31,11 @@ func (gost *GoStream) SetPlugin(name string, plugin GoStreamPlugin) {
 	gost.plugin[name] = plugin
 }
 
-func (gost *GoStream) SetWindow(path string, w gocep.Window) {
+func (gost *GoStream) SetWindow(path string, w window.Window) {
 	gost.window[path] = w
 }
 
-func (gost *GoStream) Window(path string) (gocep.Window, error) {
+func (gost *GoStream) Window(path string) (window.Window, error) {
 	v, ok := gost.window[path]
 	if ok {
 		return v, nil

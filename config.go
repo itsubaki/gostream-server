@@ -20,24 +20,20 @@ type Router struct {
 }
 
 func NewConfig() (*Config, error) {
-	p := GetString("GOSTREAM_CONFIG", "gostream.yml")
-	buf, err := ioutil.ReadFile(p)
+	path := os.Getenv("GOSTREAM_CONFIG")
+	if len(path) < 1 {
+		path = "gostream.yml"
+	}
+
+	buf, err := ioutil.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("read %s: %v", p, err)
+		return nil, fmt.Errorf("read %s: %v", path, err)
 	}
 
 	var config Config
 	if err := yaml.Unmarshal(buf, &config); err != nil {
-		return nil, fmt.Errorf("unmarshal %s: %v", p, err)
+		return nil, fmt.Errorf("unmarshal %s: %v", path, err)
 	}
 
 	return &config, nil
-}
-
-func GetString(env, init string) string {
-	val := os.Getenv(env)
-	if len(val) == 0 {
-		return init
-	}
-	return val
 }

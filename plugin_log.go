@@ -9,7 +9,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/itsubaki/gocep"
+	"github.com/itsubaki/gocep/pkg/event"
+	"github.com/itsubaki/gocep/pkg/parser"
 )
 
 type LogEvent struct {
@@ -48,7 +49,7 @@ func NewLogEvent(body io.ReadCloser) (LogEvent, error) {
 }
 
 func (h *LogEventPlugin) Setup(gost *GoStream, r *Router) error {
-	p := gocep.NewParser()
+	p := parser.New()
 	p.Register("LogEvent", LogEvent{})
 
 	s, err := p.Parse(r.Query)
@@ -66,9 +67,9 @@ func (h *LogEventPlugin) Setup(gost *GoStream, r *Router) error {
 
 		select {
 		case events := <-w.Output():
-			c.JSON(200, gocep.Newest(events))
+			c.JSON(200, event.Newest(events))
 		default:
-			c.JSON(200, gocep.Event{Time: time.Now()})
+			c.JSON(200, event.Event{Time: time.Now()})
 		}
 	})
 
