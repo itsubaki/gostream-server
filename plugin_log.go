@@ -38,17 +38,12 @@ func NewLogEvent(body io.ReadCloser) (LogEvent, error) {
 		return LogEvent{}, uerr
 	}
 
-	uuid, err := uuid.NewUUID()
-	if err != nil {
-		return LogEvent{}, err
-	}
-
-	event.ID = uuid.String()
+	event.ID = uuid.Must(uuid.NewUUID()).String()
 
 	return event, nil
 }
 
-func (h *LogEventPlugin) Setup(gost *GoStream, r *Router) error {
+func (h *LogEventPlugin) Setup(g *GoStream, r *Router) error {
 	p := parser.New()
 	p.Register("LogEvent", LogEvent{})
 
@@ -56,10 +51,10 @@ func (h *LogEventPlugin) Setup(gost *GoStream, r *Router) error {
 	if err != nil {
 		return fmt.Errorf("parse %s: %v", r.Query, err)
 	}
-	gost.SetWindow(r.Path, s.New(1024))
+	g.SetWindow(r.Path, s.New())
 
-	gost.GET(r.Path, func(c *gin.Context) {
-		w, err := gost.Window(c.Request.RequestURI)
+	g.GET(r.Path, func(c *gin.Context) {
+		w, err := g.Window(c.Request.RequestURI)
 		if err != nil {
 			c.JSON(400, err)
 			return
@@ -73,14 +68,14 @@ func (h *LogEventPlugin) Setup(gost *GoStream, r *Router) error {
 		}
 	})
 
-	gost.POST(r.Path, func(c *gin.Context) {
+	g.POST(r.Path, func(c *gin.Context) {
 		event, err := NewLogEvent(c.Request.Body)
 		if err != nil {
 			c.JSON(400, err)
 			return
 		}
 
-		w, err := gost.Window(c.Request.RequestURI)
+		w, err := g.Window(c.Request.RequestURI)
 		if err != nil {
 			c.JSON(400, err)
 			return

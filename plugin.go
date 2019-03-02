@@ -1,5 +1,5 @@
 package main
 
 type GoStreamPlugin interface {
-	Setup(gost *GoStream, r *Router) error
+	Setup(g *GoStream, r *Router) error
 }

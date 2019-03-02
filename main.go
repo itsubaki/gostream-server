@@ -13,10 +13,10 @@ func main() {
 	}
 	fmt.Printf("config=%v\n", c)
 
-	gost := NewGoStream(c)
-	gost.SetPlugin("LogEventPlugin", &LogEventPlugin{})
+	g := NewGoStream(c)
+	g.SetPlugin("LogEventPlugin", &LogEventPlugin{})
 
-	if err := gost.Run(); err != nil {
+	if err := g.Run(); err != nil {
 		fmt.Printf("run: %v\n", err)
 		os.Exit(1)
 	}
