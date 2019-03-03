@@ -9,8 +9,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/itsubaki/gocep/pkg/event"
-	"github.com/itsubaki/gocep/pkg/parser"
+	"github.com/itsubaki/gostream-core/pkg/event"
+	"github.com/itsubaki/gostream-core/pkg/parser"
 	"github.com/itsubaki/gostream/pkg/config"
 	"github.com/itsubaki/gostream/pkg/gostream"
 )

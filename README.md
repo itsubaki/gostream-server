@@ -17,6 +17,7 @@ config: {
   "Router":
     [
       {
+        "Plugin":"LogEventPlugin",
         "Path":"/",
         "Query":"select count(*) from LogEvent.time(10 sec)"
       }
