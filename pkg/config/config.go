@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"fmt"
@@ -19,7 +19,7 @@ type Router struct {
 	Query  string `yaml:"query"`
 }
 
-func NewConfig() (*Config, error) {
+func New() (*Config, error) {
 	path := os.Getenv("GOSTREAM_CONFIG")
 	if len(path) < 1 {
 		path = "gostream.yml"

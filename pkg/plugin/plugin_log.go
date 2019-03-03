@@ -1,4 +1,4 @@
-package main
+package plugin
 
 import (
 	"encoding/json"
@@ -11,13 +11,15 @@ import (
 	"github.com/google/uuid"
 	"github.com/itsubaki/gocep/pkg/event"
 	"github.com/itsubaki/gocep/pkg/parser"
+	"github.com/itsubaki/gostream/pkg/config"
+	"github.com/itsubaki/gostream/pkg/gostream"
 )
 
 type LogEvent struct {
 	ID      string
-	Time    time.Time `json:"time"`
-	Level   int       `json:"level"`
-	Message string    `json:"message"`
+	Time    time.Time `json:"Time"`
+	Level   int       `json:"Level"`
+	Message string    `json:"Message"`
 }
 
 type RequestID struct {
@@ -43,7 +45,7 @@ func NewLogEvent(body io.ReadCloser) (LogEvent, error) {
 	return event, nil
 }
 
-func (h *LogEventPlugin) Setup(g *GoStream, r *Router) error {
+func (h *LogEventPlugin) Setup(g *gostream.GoStream, r *config.Router) error {
 	p := parser.New()
 	p.Register("LogEvent", LogEvent{})
 
