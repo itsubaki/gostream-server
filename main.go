@@ -17,7 +17,7 @@ func main() {
 	}
 	fmt.Printf("config=%v\n", c)
 
-	g := gostream.New(c)
+	g := gostream.New()
 	p := map[string]plugin.Plugin{
 		"LogEventPlugin": &plugin.LogEventPlugin{},
 	}
@@ -26,7 +26,7 @@ func main() {
 		p[r.Plugin].Setup(g, &r)
 	}
 
-	if err := g.Run(); err != nil {
+	if err := g.Run(c.Port); err != nil {
 		fmt.Printf("run: %v\n", err)
 		os.Exit(1)
 	}
