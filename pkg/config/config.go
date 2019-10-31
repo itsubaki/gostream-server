@@ -22,7 +22,7 @@ type Router struct {
 func New() (*Config, error) {
 	path := os.Getenv("GOSTREAM_CONFIG")
 	if len(path) < 1 {
-		path = "gostream.yml"
+		path = "config.yml"
 	}
 
 	buf, err := ioutil.ReadFile(path)

@@ -1,8 +1,8 @@
 package plugin
 
 import (
-	"github.com/itsubaki/gostream/pkg/config"
-	"github.com/itsubaki/gostream/pkg/gostream"
+	"github.com/itsubaki/gostream-api/pkg/config"
+	"github.com/itsubaki/gostream-api/pkg/gostream"
 )
 
 type Plugin interface {

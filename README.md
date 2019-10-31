@@ -4,13 +4,13 @@ The Stream Processing Service written in Go
 ## install
 
 ```console
-$ go get github.com/itsubaki/gostream
+$ go get github.com/itsubaki/gostream-api
 ```
 
 ## Example
 
 ```console
-$ export GOSTREAM_CONFIG=./gostream.yml
+$ export GOSTREAM_CONFIG=./config.yml
 $ gostream
 config: {
   "Port":":1234",

@@ -7,7 +7,7 @@ import (
 	"syscall"
 
 	"github.com/gin-gonic/gin"
-	"github.com/itsubaki/gostream-core/pkg/window"
+	"github.com/itsubaki/gostream/pkg/window"
 )
 
 type GoStream struct {
