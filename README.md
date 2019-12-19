@@ -1,4 +1,4 @@
-# gostream
+# gostream-api
 The Stream Processing Service written in Go
 
 ## install
