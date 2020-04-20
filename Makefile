@@ -1,6 +1,6 @@
 install:
 	set -x
-	-rm ${GOPATH}/bin/gostream-api
-	go install github.com/itsubaki/gostream-api
+	GO111MODULE=on go mod tidy
+	GO111MODULE=on go install
 
 .PHONY:

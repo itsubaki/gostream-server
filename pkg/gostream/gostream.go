@@ -7,26 +7,26 @@ import (
 	"syscall"
 
 	"github.com/gin-gonic/gin"
-	"github.com/itsubaki/gostream/pkg/window"
+	"github.com/itsubaki/gostream/pkg/stream"
 )
 
 type GoStream struct {
 	engine *gin.Engine
-	window map[string]window.Window
+	window map[string]stream.Window
 }
 
 func New() *GoStream {
 	return &GoStream{
 		engine: gin.New(),
-		window: make(map[string]window.Window),
+		window: make(map[string]stream.Window),
 	}
 }
 
-func (g *GoStream) SetWindow(path string, w window.Window) {
+func (g *GoStream) SetWindow(path string, w stream.Window) {
 	g.window[path] = w
 }
 
-func (g *GoStream) Window(path string) (window.Window, error) {
+func (g *GoStream) Window(path string) (stream.Window, error) {
 	v, ok := g.window[path]
 	if ok {
 		return v, nil
