@@ -11,8 +11,7 @@ $ go get github.com/itsubaki/gostream-api
 ## Example
 
 ```console
-$ export GOSTREAM_CONFIG=./config.yml
-$ gostream
+$ GOSTREAM_CONFIG=./config.yml gostream-api
 config: {
   "Port":":1234",
   "Router":
