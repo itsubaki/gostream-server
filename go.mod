@@ -1,4 +1,4 @@
-module github.com/itsubaki/gostream-api
+module github.com/itsubaki/gostream-server
 
 go 1.14
 

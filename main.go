@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/itsubaki/gostream-api/pkg/config"
-	"github.com/itsubaki/gostream-api/pkg/gostream"
-	"github.com/itsubaki/gostream-api/pkg/plugin"
+	"github.com/itsubaki/gostream-server/pkg/config"
+	"github.com/itsubaki/gostream-server/pkg/gostream"
+	"github.com/itsubaki/gostream-server/pkg/plugin"
 )
 
 func main() {
