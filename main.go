@@ -23,7 +23,16 @@ func main() {
 	}
 
 	for _, r := range c.Router {
-		p[r.Plugin].Setup(g, &r)
+		pp, ok := p[r.Plugin]
+		if !ok {
+			fmt.Printf("invalid plugin=%v", r.Plugin)
+			os.Exit(1)
+		}
+
+		if err := pp.Setup(g, r.Path, r.Query); err != nil {
+			fmt.Printf("setup failed. path=%v query=%v: %v", r.Path, r.Query, err)
+			os.Exit(1)
+		}
 	}
 
 	if err := g.Run(c.Port); err != nil {

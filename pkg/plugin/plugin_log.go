@@ -9,7 +9,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/itsubaki/gostream-server/pkg/config"
 	"github.com/itsubaki/gostream-server/pkg/gostream"
 	"github.com/itsubaki/gostream/pkg/event"
 	"github.com/itsubaki/gostream/pkg/parser"
@@ -45,17 +44,17 @@ func NewLogEvent(body io.ReadCloser) (LogEvent, error) {
 	return event, nil
 }
 
-func (h *LogEventPlugin) Setup(g *gostream.GoStream, r *config.Router) error {
+func (h *LogEventPlugin) Setup(g *gostream.GoStream, path, query string) error {
 	p := parser.New()
 	p.Register("LogEvent", LogEvent{})
 
-	s, err := p.Parse(r.Query)
+	s, err := p.Parse(query)
 	if err != nil {
-		return fmt.Errorf("parse %s: %v", r.Query, err)
+		return fmt.Errorf("parse %s: %v", query, err)
 	}
-	g.SetWindow(r.Path, s.New())
+	g.SetWindow(path, s.New())
 
-	g.GET(r.Path, func(c *gin.Context) {
+	g.GET(path, func(c *gin.Context) {
 		w, err := g.Window(c.Request.RequestURI)
 		if err != nil {
 			c.JSON(400, err)
@@ -70,7 +69,7 @@ func (h *LogEventPlugin) Setup(g *gostream.GoStream, r *config.Router) error {
 		}
 	})
 
-	g.POST(r.Path, func(c *gin.Context) {
+	g.POST(path, func(c *gin.Context) {
 		event, err := NewLogEvent(c.Request.Body)
 		if err != nil {
 			c.JSON(400, err)
