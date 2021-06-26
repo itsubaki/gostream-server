@@ -27,6 +27,8 @@ type RequestID struct {
 
 type LogEventPlugin struct{}
 
+var _ Plugin = (*LogEventPlugin)(nil)
+
 func NewLogEvent(body io.ReadCloser) (LogEvent, error) {
 	b, err := ioutil.ReadAll(body)
 	if err != nil {
@@ -63,7 +65,7 @@ func (h *LogEventPlugin) Setup(g *gostream.GoStream, path, query string) error {
 
 		select {
 		case events := <-w.Output():
-			c.JSON(200, event.Newest(events))
+			c.JSON(200, event.Newest(events).Record)
 		default:
 			c.JSON(200, event.Event{Time: time.Now()})
 		}
