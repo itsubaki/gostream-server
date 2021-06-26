@@ -65,7 +65,7 @@ func (h *LogEventPlugin) Setup(g *gostream.GoStream, path, query string) error {
 
 		select {
 		case events := <-w.Output():
-			c.JSON(200, event.Newest(events).Record)
+			c.JSON(200, event.Newest(events))
 		default:
 			c.JSON(200, event.Event{Time: time.Now()})
 		}

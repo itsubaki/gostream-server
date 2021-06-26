@@ -28,6 +28,8 @@ github.com/itsubaki/gostream v0.0.0-20200417040642-7c6dad5f282b h1:0RRcws9mjLnLR
 github.com/itsubaki/gostream v0.0.0-20200417040642-7c6dad5f282b/go.mod h1:PxzvblC5TLrzBtof1Xv18js50Tb4p77iyWXnuy3NY3g=
 github.com/itsubaki/gostream v0.0.0-20210626115624-bbe08121bd65 h1:jkidWgO7UkeVu3VFqP838ZeH4JuxThTpEKX8H2IenzU=
 github.com/itsubaki/gostream v0.0.0-20210626115624-bbe08121bd65/go.mod h1:8HMapQvlBS/PKSS+pejU0G7i780MGjE5Kq3p7OUYjNg=
+github.com/itsubaki/gostream v0.0.0-20210626165000-614c9b9366a6 h1:BgSHMcjS4/9iUJA/JQ4XoWFxBXDehOaywbuPhivu67s=
+github.com/itsubaki/gostream v0.0.0-20210626165000-614c9b9366a6/go.mod h1:8HMapQvlBS/PKSS+pejU0G7i780MGjE5Kq3p7OUYjNg=
 github.com/json-iterator/go v1.1.9 h1:9yzud/Ht36ygwatGx56VwCZtlI/2AD15T1X2sjSuGns=
 github.com/json-iterator/go v1.1.9/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/uOdHXbAo4=
 github.com/leodido/go-urn v1.2.0 h1:hpXL4XnriNwQ/ABnpepYM/1vCLWNDfUNts8dX3xTG6Y=
