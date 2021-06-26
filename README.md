@@ -26,14 +26,14 @@ config: {
 ```
 
 ```console
-$ curl -X POST localhost:1234 -d '{"time":"2017-12-25T12:29:27Z", "Level": 4, "Message":"foobar"}'
+$ curl -s -X POST localhost:1234 -d '{"time":"2017-12-25T12:29:27Z", "Level": 4, "Message":"foobar"}' | jq .
 {
   "ID":"2651d818-2c08-4895-981e-ddbf8e2614f8"
 }
 ```
 
 ```console
-$ curl localhost:1234
+$ curl -s localhost:1234 | jq .
 {
   "ID":"2651d818-2c08-4895-981e-ddbf8e2614f8",
   "Level":4,
