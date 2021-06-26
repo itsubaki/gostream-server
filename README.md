@@ -35,21 +35,10 @@ $ curl -X POST localhost:1234 -d '{"time":"2017-12-25T12:29:27Z", "Level": 4, "M
 ```console
 $ curl localhost:1234
 {
-  "Time":"2018-05-16T15:08:02.993021138+09:00",
-  "Underlying":
-    {
-      "ID":"2651d818-2c08-4895-981e-ddbf8e2614f8",
-      "Time":"2017-12-25T12:29:27Z",
-      "Level":4,
-      "Message":"foobar"
-    },
-  "Record":
-    {
-      "ID":"2651d818-2c08-4895-981e-ddbf8e2614f8",
-      "Level":4,
-      "Message":"foobar",
-      "Time":"2017-12-25T12:29:27Z",
-      "count(*)":1
-    }
+  "ID":"2651d818-2c08-4895-981e-ddbf8e2614f8",
+  "Level":4,
+  "Message":"foobar",
+  "Time":"2017-12-25T12:29:27Z",
+  "count(*)":1
 }
 ```
