@@ -5,7 +5,7 @@ Stream Processing Server written in golang
 ## install
 
 ```console
-$ go get github.com/itsubaki/gostream-server
+$ go install github.com/itsubaki/gostream-server@latest
 ```
 
 ## Example
