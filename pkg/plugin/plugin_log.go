@@ -14,6 +14,8 @@ import (
 	"github.com/itsubaki/gostream/pkg/parser"
 )
 
+var _ Plugin = (*LogEventPlugin)(nil)
+
 type LogEvent struct {
 	ID      string
 	Time    time.Time `json:"Time"`
@@ -26,8 +28,6 @@ type RequestID struct {
 }
 
 type LogEventPlugin struct{}
-
-var _ Plugin = (*LogEventPlugin)(nil)
 
 func NewLogEvent(body io.ReadCloser) (LogEvent, error) {
 	b, err := ioutil.ReadAll(body)
