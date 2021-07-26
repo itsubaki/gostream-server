@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	yaml "gopkg.in/yaml.v2"
@@ -25,7 +24,7 @@ func New() (*Config, error) {
 		path = "config.yml"
 	}
 
-	buf, err := ioutil.ReadFile(path)
+	buf, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("read %s: %v", path, err)
 	}
