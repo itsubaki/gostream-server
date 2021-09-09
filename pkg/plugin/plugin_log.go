@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -30,7 +29,7 @@ type RequestID struct {
 type LogEventPlugin struct{}
 
 func NewLogEvent(body io.ReadCloser) (LogEvent, error) {
-	b, err := ioutil.ReadAll(body)
+	b, err := io.ReadAll(body)
 	if err != nil {
 		return LogEvent{}, err
 	}
