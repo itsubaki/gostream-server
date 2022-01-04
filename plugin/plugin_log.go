@@ -8,9 +8,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/itsubaki/gostream-server/pkg/gostream"
-	"github.com/itsubaki/gostream/pkg/event"
-	"github.com/itsubaki/gostream/pkg/parser"
+	libgostream "github.com/itsubaki/gostream"
+	"github.com/itsubaki/gostream-server/handler"
+	"github.com/itsubaki/gostream/stream"
 )
 
 var _ Plugin = (*LogEventPlugin)(nil)
@@ -45,45 +45,44 @@ func NewLogEvent(body io.ReadCloser) (LogEvent, error) {
 	return event, nil
 }
 
-func (h *LogEventPlugin) Setup(g *gostream.GoStream, path, query string) error {
-	p := parser.New()
-	p.Register("LogEvent", LogEvent{})
-
-	s, err := p.Parse(query)
+func (p *LogEventPlugin) Setup(h *handler.Handler, path, query string) error {
+	s, err := libgostream.New().
+		Add(LogEvent{}).
+		Query(query)
 	if err != nil {
-		return fmt.Errorf("parse %s: %v", query, err)
+		return fmt.Errorf("new gostream: %v", err)
 	}
-	g.SetWindow(path, s.New())
+	h.SetStream(path, s)
 
-	g.GET(path, func(c *gin.Context) {
-		w, err := g.Window(c.Request.RequestURI)
+	h.GET(path, func(c *gin.Context) {
+		s, err := h.Stream(c.Request.RequestURI)
 		if err != nil {
 			c.JSON(400, err)
 			return
 		}
 
 		select {
-		case events := <-w.Output():
-			c.JSON(200, event.Newest(events))
+		case events := <-s.Output():
+			c.JSON(200, events[len(events)-1])
 		default:
-			c.JSON(200, event.Event{Time: time.Now()})
+			c.JSON(200, stream.Event{Time: time.Now()})
 		}
 	})
 
-	g.POST(path, func(c *gin.Context) {
+	h.POST(path, func(c *gin.Context) {
 		event, err := NewLogEvent(c.Request.Body)
 		if err != nil {
 			c.JSON(400, err)
 			return
 		}
 
-		w, err := g.Window(c.Request.RequestURI)
+		s, err := h.Stream(c.Request.RequestURI)
 		if err != nil {
 			c.JSON(400, err)
 			return
 		}
 
-		w.Input() <- event
+		s.Input() <- event
 		c.JSON(200, RequestID{event.ID})
 	})
 

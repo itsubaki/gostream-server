@@ -10,9 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/itsubaki/gostream-server/pkg/config"
-	"github.com/itsubaki/gostream-server/pkg/gostream"
-	"github.com/itsubaki/gostream-server/pkg/plugin"
+	"github.com/itsubaki/gostream-server/config"
+	"github.com/itsubaki/gostream-server/handler"
+	"github.com/itsubaki/gostream-server/plugin"
 )
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 	}
 	fmt.Printf("config=%v\n", c)
 
-	g := gostream.New()
+	h := handler.New()
 	p := map[string]plugin.Plugin{
 		"LogEventPlugin": &plugin.LogEventPlugin{},
 	}
@@ -35,7 +35,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		if err := pp.Setup(g, r.Path, r.Query); err != nil {
+		if err := pp.Setup(h, r.Path, r.Query); err != nil {
 			fmt.Printf("setup failed. path=%v query=%v: %v", r.Path, r.Query, err)
 			os.Exit(1)
 		}
@@ -43,7 +43,7 @@ func main() {
 
 	s := &http.Server{
 		Addr:    c.Port,
-		Handler: g.Handler(),
+		Handler: h.Raw(),
 	}
 
 	go func() {
@@ -64,6 +64,6 @@ func main() {
 		log.Fatalf("http server shutdown: %v\n", err)
 	}
 
-	g.Close()
+	h.Close()
 	log.Println("shutdown finished")
 }
