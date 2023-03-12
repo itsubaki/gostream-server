@@ -1,6 +1,6 @@
 # gostream-server
 
-Stream Processing Server written in golang
+Stream Processing Server written in Go
 
 ## install
 
